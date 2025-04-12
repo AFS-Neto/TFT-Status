@@ -18,4 +18,4 @@ class user_authentication():
 
             return puuid
         else:
-            return print('Access Denaied: ' + str(response.status_code))
+            return "Unauthorized: " + str(response.status_code)
