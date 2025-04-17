@@ -11,6 +11,8 @@ class user_authentication():
         
         response = requests.get(url)
 
+        #TROCAR POR TRY EXCEPT
+
         if response.status_code == 200:
             print('//----------------User Authorized----------------//')
             data = response.json()

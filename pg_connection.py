@@ -21,29 +21,31 @@ class pg_connection():
             cur.execute(query)
 
             return cur.fetchall()
+        
         except Exception as e:
             return print(f'Fail to query table: {e}')
         
     def insertOnMatchStatus(self, df):
-        self.tableName = 'match_status'
-        self.batchSise = 5
+        self.dataframe = df
+        tableName = 'match_status'
+        batchSise = 5
 
-        if df.empty:
+        if self.dataframe.empty:
             print('DataFrame is empety')
         else:
             maxGameCreation = self.savedMateches()
-            axsInsertdf = df[df['game_creation'] > maxGameCreation]
+            axsInsertdf = self.dataframe[self.dataframe['game_creation'] > maxGameCreation]
             
         rows = [tuple(x) for x in axsInsertdf.to_numpy()]
         cols = ','.join(axsInsertdf.columns)
 
-        insert = f'INSERT INTO tft.{self.tableName} ({cols}) VALUES %s'
+        insert = f'INSERT INTO tft.{tableName} ({cols}) VALUES %s'
 
         try:
             cur = self.con.cursor()
             pointer = 0
-            for i in range(0, len(rows), self.batchSise):
-                batch = rows[i:i + self.batchSise]
+            for i in range(0, len(rows), batchSise):
+                batch = rows[i:i + batchSise]
                 
                 ex.execute_values(cur,insert,batch)
                 self.con.commit()
